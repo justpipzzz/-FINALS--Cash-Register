@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -97,53 +99,81 @@ public class Main {
 
     }
 
-    public static void showSaveReceipt(
-    ArrayList<String> buyCode,
-    ArrayList<String> buyItem,
-    ArrayList<Integer> buyQuan,
-    ArrayList<Double> buyPrice,
-    double payment,
-    double change
-) {
-    try {
+    public static void showHistory() {
         File dir = new File("transactions");
-        if (!dir.exists()) dir.mkdir();
 
-        int fileIndex = 1;
-        File receiptFile;
-        do {
-            receiptFile = new File(dir, String.format("transaction_%02d.txt", fileIndex));
-            fileIndex++;
-        } while (receiptFile.exists());
-
-        try (PrintWriter writer = new PrintWriter(new FileWriter(receiptFile))) {
-            writer.println("============================================");
-            writer.println("        OFFICIAL TRANSACTION RECEIPT     ");
-            writer.println("============================================");
-            writer.println("Date and Time: " + formattedDate);
-            writer.println("Cashier Username: " + logUname + "\n");
-            writer.println("Receipt:");
-            
-            double total = 0;
-            for (int i = 0; i < buyItem.size(); i++) {
-                double subtotal = buyQuan.get(i) * buyPrice.get(i);
-                writer.printf("%-5s %-15s %2d    Php %7.2f    Php %7.2f\n", buyCode.get(i), buyItem.get(i), buyQuan.get(i), buyPrice.get(i), subtotal);
-                total += subtotal;
-            }
-
-            writer.println("--------------------------------------------");
-            writer.printf("Your Total: Php %7.2f\n", total);
-            writer.printf("Payment: Php %7.2f\n", payment);
-            writer.printf("Change: Php %7.2f\n", change);
-            writer.println("============================================");
+        if (!dir.exists() || dir.listFiles() == null || dir.listFiles().length == 0) {
+            System.out.println("No transactions found.");
+            return;
         }
 
-        System.out.println("Receipt saved as " + receiptFile.getName());
+        File[] files = dir.listFiles((d, name) -> name.endsWith(".txt"));
 
-    } catch (IOException e) {
-        System.out.println("Error saving receipt: " + e.getMessage());
+        System.out.println("Available Transactions:\n");
+        for (int i = 0; i < files.length; i++) {
+            System.out.println("[" + (i + 1) + "]" + " - " + files[i].getName());
+        }
+
+        try {
+            System.out.print("\nEnter transaction number to view: ");
+            int choice = Integer.parseInt(input.nextLine());
+            if (choice >= 1 && choice <= files.length) {
+                File selected = files[choice - 1];
+                System.out.println("\n===== Transaction Details =====");
+                BufferedReader reader = new BufferedReader(new FileReader(selected));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                reader.close();
+            } else {
+                System.out.println("Invalid selection.");
+            }
+        } catch (NumberFormatException | IOException e) {
+            System.out.println("Error reading transaction: " + e.getMessage());
+        }
     }
-}
+
+    public static void showSaveReceipt(ArrayList<String> buyCode, ArrayList<String> buyItem, ArrayList<Integer> buyQuan, ArrayList<Double> buyPrice, double payment, double change) {
+        try {
+            File dir = new File("transactions");
+            if (!dir.exists()) dir.mkdir();
+
+            int fileIndex = 1;
+            File receiptFile;
+            do {
+                receiptFile = new File(dir, String.format("transaction_%02d.txt", fileIndex));
+                fileIndex++;
+            } while (receiptFile.exists());
+
+            try (PrintWriter writer = new PrintWriter(new FileWriter(receiptFile))) {
+                writer.println("============================================");
+                writer.println("        OFFICIAL TRANSACTION RECEIPT     ");
+                writer.println("============================================");
+                writer.println("Date and Time: " + formattedDate);
+                writer.println("Cashier Username: " + logUname + "\n");
+                writer.println("Receipt:");
+            
+                double total = 0;
+                for (int i = 0; i < buyItem.size(); i++) {
+                    double subtotal = buyQuan.get(i) * buyPrice.get(i);
+                    writer.printf("%-5s %-15s %2d    Php %7.2f    Php %7.2f\n", buyCode.get(i), buyItem.get(i), buyQuan.get(i), buyPrice.get(i), subtotal);
+                    total += subtotal;
+                }
+
+                writer.println("--------------------------------------------");
+                writer.printf("Your Total: Php %7.2f\n", total);
+                writer.printf("Payment: Php %7.2f\n", payment);
+                writer.printf("Change: Php %7.2f\n", change);
+                writer.println("============================================");
+            }
+
+            System.out.println("Receipt saved as " + receiptFile.getName());
+
+        } catch (IOException e) {
+            System.out.println("Error saving receipt: " + e.getMessage());
+        }
+    }
 
 
     public static void showEditQuantity(ArrayList<String> buyCode, ArrayList<String> buyItem, ArrayList<Integer> buyQuan, ArrayList<String> menuCode, ArrayList<String> menuItem, ArrayList<Double> menuPrice, ArrayList<Double> buyPrice) {
@@ -205,6 +235,8 @@ public class Main {
                     menuCode.remove(i);
                     menuItems.remove(i);
                     menuPrice.remove(i);
+                    showClear();
+                    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     System.out.println("Item successfully removed!");
                 }
             }
@@ -284,6 +316,8 @@ public class Main {
                     isRunning = true;
                     break;
                 case 'n':
+                    showClear();
+                    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     System.out.println("Item/s successfully added!");
                     isRunning = false;
                     return;
@@ -296,6 +330,7 @@ public class Main {
     }
 
     public static void showCustom(ArrayList<String> menuCode, ArrayList<String> menuItems, ArrayList<Double> menuPrice) {
+        showClear();
         System.out.println("Welcome to Menu Customization! What would you like to do?");
         boolean isRunning = true;
         boolean isRunningTwo = true;
@@ -310,18 +345,22 @@ public class Main {
             input.nextLine();
             switch (numOpt) {
                 case 1:
+                    showClear();
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     showAddMenu(menuCode, menuItems, menuPrice);
                     isRunning = true;
                     break;
                 case 2:
+                    showClear();
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     showRemoveMenuItem(menuCode, menuItems, menuPrice, true);
                     isRunning = true;
                     break;
                 case 3:
+                    showClear()
                     isRunningTwo = true;
                     while (isRunningTwo){
+                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         System.out.println("Are you sure you want to clear all menu items?:");
                         System.out.print("Y or N: ");
                         ynOpt = input.nextLine().toLowerCase();
@@ -329,9 +368,13 @@ public class Main {
                             menuCode.clear();
                             menuItems.clear();
                             menuPrice.clear();
+                            showClear();
+                            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                             System.out.println("Menu Board cleared successfully!");
                             isRunningTwo = false;
                         } else if (ynOpt.equals("n")){
+                            showClear();
+                            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                             System.out.println("Clear Menu cancelled.");
                             isRunningTwo = false;
                         } else{
@@ -449,6 +492,7 @@ public class Main {
     }
 
     public static void showMenu(ArrayList<String> menuCode, ArrayList<String> menuItem, ArrayList<Double> menuPrice){
+        showClear();
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("Aling Nena's Eatery Menu:");
         for (int i = 0; i < menuItem.size(); i++){
@@ -471,7 +515,7 @@ public class Main {
         while (isRunning){
 
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            System.out.println("1 - New Transaction \n2 - Menu Items \n3 - Menu Options \n4 - Log-out");
+            System.out.println("1 - New Transaction \n2 - Menu Items \n3 - Menu Options \n4 - Transaction History \n5 - Log-out");
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
             System.out.print("Enter your option: ");
@@ -493,12 +537,18 @@ public class Main {
                     showCustom(menuCode, menuItem, menuPrice);
                     break;
                 case 4:
+                    showClear();
+                    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    showHistory();
+                    break;
+                case 5:
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     while (true){
                         System.out.print("Are you sure? Y or N: ");
                         String ynOpt = input.nextLine();
 
                         if (ynOpt.equalsIgnoreCase("y")){
+                            showClear();
                             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                             System.out.println("Time-out: " + formattedDate);
                             return;
