@@ -18,7 +18,15 @@ public class Main {
     static ArrayList<Double> buyPrice = new ArrayList<>();
     static ArrayList<Integer> buyQuan = new ArrayList<>();
 
+    static String logUname;
+
+    public static void showClear(){  
+        System.out.print("\033[H\033[2J");  
+        System.out.flush();  
+    }  
+
     public static void showSignUp(ArrayList <String> userName, ArrayList <String> passWord){
+        showClear();
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("ACCOUNT SIGN-UP");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -39,8 +47,8 @@ public class Main {
             }
 
             userName.add(cashUname);
-            System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            System.out.println("Username Accepted!");//uname confirmation
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println("Username \"" + cashUname + "\" Accepted!");//uname confirmation
 
             break;
 
@@ -71,8 +79,12 @@ public class Main {
             break;
             
         }
+        showClear();
+        
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("\nAccount Created Successfully!\n");
+        System.out.println("Account Created Successfully!");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("Redirecting to Home Page...");
 
 
     }
@@ -101,24 +113,32 @@ public class Main {
 
         }else{
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            System.out.println("Which item will be removed? Fill out the necesary fields:");
+            System.out.println("Which item will be removed? Type \"None\" if none. Fill out the necesary fields:");
             System.out.print("Enter Menu Code: ");
             String remMC = input.nextLine().toUpperCase();
             if (menuCode.contains(remMC)){
-            for (int i = 0; i < menuCode.size(); i++){
-                if (remMC.contentEquals(menuCode.get(i))){
-                    menuCode.remove(i);
-                    menuItems.remove(i);
-                    menuPrice.remove(i);
-                    System.out.println("Item successfully removed!");
-                }else{
-                    System.out.println("Error");
+                for (int i = 0; i < menuCode.size(); i++){
+                    if (remMC.contentEquals(menuCode.get(i))){
+                        menuCode.remove(i);
+                        menuItems.remove(i);
+                        menuPrice.remove(i);
+                        showClear();
+                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                        System.out.println("Item successfully removed!");
+                    }
                 }
-            }
-            showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+                
+                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+            } else if (remMC.equalsIgnoreCase("NONE")){
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Back to Receipt...");
+                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
             } else {
-                System.out.println("Product Not Found");
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Item Not Found");
+                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
             }
+
         }
      
        
@@ -251,6 +271,7 @@ public class Main {
             String choice = input.nextLine();
 
             if (choice.equals("1")){
+                showClear();
                 showTransaction(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
 
             }else if(choice.equals("2")){
@@ -298,6 +319,9 @@ public class Main {
             System.out.print("Menu Code: ");
             String buyMenu = input.nextLine();
             if (buyMenu.equalsIgnoreCase("done")){
+                showClear();
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Redirecting to Receipt...");
                 showReceipt(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
                 ordering = false;
                 return;
@@ -338,7 +362,7 @@ public class Main {
         String formattedDate = myDateObj.format(myFormatObj);
 
         System.out.println("Welcome to Aling Nena's Cash Register!");
-        System.out.println("You are now logged in.");
+        System.out.println("Cashier Username: " + logUname);
         System.out.println("Time-in: " + formattedDate);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
@@ -357,6 +381,7 @@ public class Main {
 
             switch (option){
                 case 1:
+                    showClear();
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     showTransaction(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);//create a new transaction
                     break;
@@ -375,6 +400,7 @@ public class Main {
                         String ynOpt = input.nextLine();
 
                         if (ynOpt.equalsIgnoreCase("y")){
+                            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                             System.out.println("Time-out: " + formattedDate);
                             return;
                         } else if (ynOpt.equalsIgnoreCase("n")){
@@ -391,10 +417,12 @@ public class Main {
     }
 
     public static void showLogIn(){
+        showClear();
+        
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         while (true){
             System.out.print("Enter Username: ");
-            String logUname = input.nextLine();
+            logUname = input.nextLine();
 
             boolean isFound = false;
 
@@ -407,7 +435,9 @@ public class Main {
                         String logPword = input.nextLine();
 
                         if (passWord.get(i).equals(logPword)){
-                            System.out.println("\nLog-in Successful! Redirecting to Welcome Page...");
+                            showClear();
+                            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                            System.out.println("Log-in Successful! Redirecting to Welcome Page...");
                             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                             return;
                             
@@ -421,6 +451,7 @@ public class Main {
                 System.out.println("User does not exist. Please try again.");
             }
         }
+
     }
 
     public static void showHomePage(){
@@ -440,13 +471,16 @@ public class Main {
 
             switch (option){
                 case 1:
+                    showClear();
                     showSignUp(userName, passWord); // redirect to sign-up page
                     break;
                 case 2:
+                    showClear();
                     showLogIn(); //redirect to log-in page
                     showWelcome(); //if log-in successful, redirect to welcome page
                     break;
                 case 3:
+                    showClear();
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     System.out.println("Thank you for using Aling Nena's Cash Register! <3");
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
