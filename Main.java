@@ -357,7 +357,7 @@ public class Main {
                     isRunning = true;
                     break;
                 case 3:
-                    showClear()
+                    showClear();
                     isRunningTwo = true;
                     while (isRunningTwo){
                         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
