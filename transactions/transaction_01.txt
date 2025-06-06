@@ -1,0 +1,15 @@
+============================================
+        OFFICIAL TRANSACTION RECEIPT     
+============================================
+Date and Time: 06-06-2025 20:19:35
+Cashier Username: ANC_Pipo
+
+Receipt:
+P1    Pork Adobo       2    Php  119.00    Php  238.00
+P2    Pork Chops       4    Php   99.00    Php  396.00
+C1    Fried Chicken    1    Php   99.00    Php   99.00
+--------------------------------------------
+Your Total: Php  733.00
+Payment: Php  800.00
+Change: Php   67.00
+============================================
