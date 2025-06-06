@@ -89,6 +89,47 @@ public class Main {
 
     }
 
+    public static void showEditQuantity(ArrayList<String> buyCode, ArrayList<String> buyItem, ArrayList<Integer> buyQuan, ArrayList<String> menuCode, ArrayList<String> menuItem, ArrayList<Double> menuPrice, ArrayList<Double> buyPrice) {
+        showClear();
+        System.out.println("Edit Item Quantity");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        for (int i = 0; i < buyCode.size(); i++) {
+            System.out.printf("[%d] - %s (%s) - Current Quantity: %d\n", i + 1, buyItem.get(i), buyCode.get(i), buyQuan.get(i));
+        }
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        try {
+            System.out.print("Enter the item number to edit: ");
+            int index = input.nextInt() - 1;
+
+            if (index >= 0 && index < buyQuan.size()) {
+                System.out.print("Enter new quantity for " + buyItem.get(index) + ": ");
+                int newQty = input.nextInt();
+                if (newQty > 0) {
+                    buyQuan.set(index, newQty);
+                    showClear();
+                    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    System.out.println("Quantity updated successfully.");
+                    input.nextLine();
+                } else {
+                    System.out.println("Quantity must be greater than 0.");
+
+                }
+            } else {
+                showClear();
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Invalid item number.");
+                input.nextLine();
+            }
+        } catch (Exception e) {
+            showClear();
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println("Invalid input. Please try again.");
+            input.nextLine(); // clear buffer
+        }
+
+        showReceipt(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+    }
+
     public static void showRemoveMenuItem(ArrayList<String> menuCode, ArrayList<String> menuItems, ArrayList<Double> menuPrice, boolean isMenu) {
         if(isMenu){
             System.out.println("Aling Nena's Eatery Menu:");
@@ -130,6 +171,7 @@ public class Main {
                 
                 showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
             } else if (remMC.equalsIgnoreCase("NONE")){
+                showClear();
                 System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 System.out.println("Back to Receipt...");
                 showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
@@ -141,7 +183,6 @@ public class Main {
 
         }
      
-       
     }
 
     public static void showAddMenu(ArrayList<String> menuCode, ArrayList<String> menuItems, ArrayList<Double> menuPrice) {
@@ -262,53 +303,56 @@ public class Main {
         }
         System.out.println("\t\t\t\t___________________________");
         System.out.printf("\t\t\t\tYour Total:\tPhp %.2f\n", totalAll);
-        // while (isRunning){
-            System.out.println("Do you want to edit your transaction?");
-            System.out.println("1 - Add Item/s");
-            System.out.println("2 - Remove Item/s");
-            System.out.println("3 - No");
-            System.out.print("Enter Choice: ");
-            String choice = input.nextLine();
 
-            if (choice.equals("1")){
-                showClear();
-                showTransaction(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+        System.out.println("Do you want to edit your transaction?");
+        System.out.println("1 - Add Item/s");
+        System.out.println("2 - Remove Item/s");
+        System.out.println("3 - Edit Item Quantity");
+        System.out.println("4 - No");
+        System.out.print("Enter Choice: ");
+        String choice = input.nextLine();
 
-            }else if(choice.equals("2")){
-                showRemoveMenuItem(buyCode, buyItem, buyPrice, false);
+        if (choice.equals("1")){
+            showClear();
+            showTransaction(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+
+        }else if(choice.equals("2")){
+            showRemoveMenuItem(buyCode, buyItem, buyPrice, false);
                 
-            }else if(choice.equals("3")){
-                double payment;
+        }else if(choice.equals("3")){
+            showEditQuantity(buyCode, buyItem, buyQuan, menuCode, menuItem, menuPrice, buyPrice);
 
-                while (true) { 
-                    System.out.print("\t\t\t\tPayment: \tPhp ");
-                    try {
-                        payment = input.nextDouble();
-        
-                        if (payment <= 0) {
-                            System.out.println("Payment should be greater than 0!");
-                            continue;
-                        }
-                        } catch (Exception e) {
-                            System.out.println("Invalid input");
-        
-                            continue;
-                        }
+        }else if(choice.equals("4")){
+            double payment;
 
-                        break;
+            while (true) { 
+                System.out.print("\t\t\t\tPayment: \tPhp ");
+                try {
+                    payment = input.nextDouble();
+        
+                    if (payment <= 0) {
+                        System.out.println("Payment should be greater than 0!");
+                        continue;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Invalid input");
+        
+                    continue;
                 }
 
-                double change = payment - totalAll;
-                System.out.printf("\t\t\t\tChange: \tPhp %.2f\n", change);
-                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                System.out.println("Transaction complete!");
-                buyCode.clear();
-                buyItem.clear();
-                buyPrice.clear();
-                buyQuan.clear();
-                isRunning = false;
+                break;
             }
-        // }
+
+            double change = payment - totalAll;
+            System.out.printf("\t\t\t\tChange: \tPhp %.2f\n", change);
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println("Transaction complete!");
+            buyCode.clear();
+            buyItem.clear();
+            buyPrice.clear();
+            buyQuan.clear();
+            isRunning = false;
+        }
     }
 
     public static void showTransaction(ArrayList<String> menuCode, ArrayList<String> menuItem, ArrayList<Double> menuPrice, ArrayList<String> buyCode, ArrayList<String> buyItem, ArrayList<Double> buyPrice, ArrayList<Integer> buyQuan){
