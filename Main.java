@@ -20,7 +20,7 @@ public class Main {
     static ArrayList <String> passWord = new ArrayList<>();
 
     static ArrayList <String> menuCode = new ArrayList<>();
-    static ArrayList <String> menuItem = new ArrayList<>();
+    static ArrayList <String> menuItems = new ArrayList<>();
     static ArrayList <Double> menuPrice = new ArrayList<>();
 
     static ArrayList<String> buyCode = new ArrayList<>();
@@ -217,8 +217,38 @@ public class Main {
         showReceipt(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
     }
 
-    public static void showRemoveMenuItem(ArrayList<String> menuCode, ArrayList<String> menuItems, ArrayList<Double> menuPrice, boolean isMenu) {
-        if(isMenu){
+    public static void showRemoveBuyItem(){
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println("Which item will be removed? Type \"None\" if none. Fill out the necesary fields:");
+            System.out.print("Enter Menu Code: ");
+            String remMC = input.nextLine().toUpperCase();
+            if (buyCode.contains(remMC)){
+                for (int i = 0; i < buyCode.size(); i++){
+                    if (remMC.contentEquals(buyCode.get(i))){
+                        buyCode.remove(i);
+                        buyItem.remove(i);
+                        buyPrice.remove(i);
+                        buyQuan.remove(i);
+                        showClear();
+                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                        System.out.println("Item successfully removed!");
+                    }
+                }
+                
+                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+            } else if (remMC.equalsIgnoreCase("NONE")){
+                showClear();
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Back to Receipt...");
+                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+            } else {
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Item Not Found");
+                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+    }
+    }
+
+    public static void showRemoveMenuItem(ArrayList<String> menuCode, ArrayList<String> menuItems, ArrayList<Double> menuPrice) {
             System.out.println("Aling Nena's Eatery Menu:");
             for (int i = 0; i < menuItems.size(); i++){
                 System.out.print(menuCode.get(i) + "\t");
@@ -240,38 +270,6 @@ public class Main {
                     System.out.println("Item successfully removed!");
                 }
             }
-
-        }else{
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            System.out.println("Which item will be removed? Type \"None\" if none. Fill out the necesary fields:");
-            System.out.print("Enter Menu Code: ");
-            String remMC = input.nextLine().toUpperCase();
-            if (menuCode.contains(remMC)){
-                for (int i = 0; i < menuCode.size(); i++){
-                    if (remMC.contentEquals(menuCode.get(i))){
-                        menuCode.remove(i);
-                        menuItems.remove(i);
-                        menuPrice.remove(i);
-                        showClear();
-                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                        System.out.println("Item successfully removed!");
-                    }
-                }
-                
-                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
-            } else if (remMC.equalsIgnoreCase("NONE")){
-                showClear();
-                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                System.out.println("Back to Receipt...");
-                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
-            } else {
-                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                System.out.println("Item Not Found");
-                showReceipt(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
-            }
-
-        }
-     
     }
 
     public static void showAddMenu(ArrayList<String> menuCode, ArrayList<String> menuItems, ArrayList<Double> menuPrice) {
@@ -353,7 +351,7 @@ public class Main {
                 case 2:
                     showClear();
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                    showRemoveMenuItem(menuCode, menuItems, menuPrice, true);
+                    showRemoveMenuItem(menuCode, menuItems, menuPrice);
                     isRunning = true;
                     break;
                 case 3:
@@ -417,7 +415,7 @@ public class Main {
             showTransaction(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
 
         }else if(choice.equals("2")){
-            showRemoveMenuItem(buyCode, buyItem, buyPrice, false);
+            showRemoveBuyItem();
                 
         }else if(choice.equals("3")){
             showEditQuantity(buyCode, buyItem, buyQuan, menuCode, menuItem, menuPrice, buyPrice);
@@ -526,15 +524,15 @@ public class Main {
                 case 1:
                     showClear();
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                    showTransaction(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);//create a new transaction
+                    showTransaction(menuCode, menuItems, menuPrice, buyCode, buyItem, buyPrice, buyQuan);//create a new transaction
                     break;
                 case 2:
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                    showMenu(menuCode, menuItem, menuPrice);//displays menu
+                    showMenu(menuCode, menuItems, menuPrice);//displays menu
                     break;
                 case 3:
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                    showCustom(menuCode, menuItem, menuPrice);
+                    showCustom(menuCode, menuItems, menuPrice);
                     break;
                 case 4:
                     showClear();
@@ -651,12 +649,12 @@ public class Main {
         menuCode.add("C1");
         menuCode.add("C2");
 
-        menuItem.add("Pork Adobo");
-        menuItem.add("Pork Chops");
-        menuItem.add("Beef Caldereta");
-        menuItem.add("Beef Tapa");
-        menuItem.add("Fried Chicken");
-        menuItem.add("Chicken Curry");
+        menuItems.add("Pork Adobo");
+        menuItems.add("Pork Chops");
+        menuItems.add("Beef Caldereta");
+        menuItems.add("Beef Tapa");
+        menuItems.add("Fried Chicken");
+        menuItems.add("Chicken Curry");
 
         menuPrice.add(119.00);
         menuPrice.add(99.00);
