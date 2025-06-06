@@ -1,3 +1,7 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -5,6 +9,10 @@ import java.util.regex.*;
 
 public class Main {
     static Scanner input = new Scanner(System.in);
+
+    static LocalDateTime myDateObj = LocalDateTime.now();
+    static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    static String formattedDate = myDateObj.format(myFormatObj);
 
     static ArrayList <String> userName = new ArrayList<>();
     static ArrayList <String> passWord = new ArrayList<>();
@@ -88,6 +96,55 @@ public class Main {
 
 
     }
+
+    public static void showSaveReceipt(
+    ArrayList<String> buyCode,
+    ArrayList<String> buyItem,
+    ArrayList<Integer> buyQuan,
+    ArrayList<Double> buyPrice,
+    double payment,
+    double change
+) {
+    try {
+        File dir = new File("transactions");
+        if (!dir.exists()) dir.mkdir();
+
+        int fileIndex = 1;
+        File receiptFile;
+        do {
+            receiptFile = new File(dir, String.format("transaction_%02d.txt", fileIndex));
+            fileIndex++;
+        } while (receiptFile.exists());
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(receiptFile))) {
+            writer.println("============================================");
+            writer.println("        OFFICIAL TRANSACTION RECEIPT     ");
+            writer.println("============================================");
+            writer.println("Date and Time: " + formattedDate);
+            writer.println("Cashier Username: " + logUname + "\n");
+            writer.println("Receipt:");
+            
+            double total = 0;
+            for (int i = 0; i < buyItem.size(); i++) {
+                double subtotal = buyQuan.get(i) * buyPrice.get(i);
+                writer.printf("%-5s %-15s %2d    Php %7.2f    Php %7.2f\n", buyCode.get(i), buyItem.get(i), buyQuan.get(i), buyPrice.get(i), subtotal);
+                total += subtotal;
+            }
+
+            writer.println("--------------------------------------------");
+            writer.printf("Your Total: Php %7.2f\n", total);
+            writer.printf("Payment: Php %7.2f\n", payment);
+            writer.printf("Change: Php %7.2f\n", change);
+            writer.println("============================================");
+        }
+
+        System.out.println("Receipt saved as " + receiptFile.getName());
+
+    } catch (IOException e) {
+        System.out.println("Error saving receipt: " + e.getMessage());
+    }
+}
+
 
     public static void showEditQuantity(ArrayList<String> buyCode, ArrayList<String> buyItem, ArrayList<Integer> buyQuan, ArrayList<String> menuCode, ArrayList<String> menuItem, ArrayList<Double> menuPrice, ArrayList<Double> buyPrice) {
         showClear();
@@ -347,6 +404,7 @@ public class Main {
             System.out.printf("\t\t\t\tChange: \tPhp %.2f\n", change);
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             System.out.println("Transaction complete!");
+            showSaveReceipt(buyCode, buyItem, buyQuan, buyPrice, payment, change);
             buyCode.clear();
             buyItem.clear();
             buyPrice.clear();
@@ -401,9 +459,6 @@ public class Main {
     }
     
     public static void showWelcome(){
-        LocalDateTime myDateObj = LocalDateTime.now();
-        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = myDateObj.format(myFormatObj);
 
         System.out.println("Welcome to Aling Nena's Cash Register!");
         System.out.println("Cashier Username: " + logUname);
