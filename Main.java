@@ -1,9 +1,4 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -402,6 +397,7 @@ public class Main {
         System.out.println("\t\t\t\t___________________________");
         System.out.printf("\t\t\t\tYour Total:\tPhp %.2f\n", totalAll);
 
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("Do you want to edit your transaction?");
         System.out.println("1 - Add Item/s");
         System.out.println("2 - Remove Item/s");
@@ -427,14 +423,12 @@ public class Main {
                 System.out.print("\t\t\t\tPayment: \tPhp ");
                 try {
                     payment = input.nextDouble();
-        
-                    if (payment <= 0) {
-                        System.out.println("Payment should be greater than 0!");
+                    if (payment < totalAll) {
+                        System.out.println("Payment insufficient. Please try again.");
                         continue;
                     }
                 } catch (Exception e) {
                     System.out.println("Invalid input");
-        
                     continue;
                 }
 
@@ -457,37 +451,67 @@ public class Main {
     public static void showTransaction(ArrayList<String> menuCode, ArrayList<String> menuItem, ArrayList<Double> menuPrice, ArrayList<String> buyCode, ArrayList<String> buyItem, ArrayList<Double> buyPrice, ArrayList<Integer> buyQuan){
         System.out.println("Place customer's order/s below, type \"done\" to proceed to checkout:");
         boolean ordering = true;
+        while (ordering) {
+            try {
+                System.out.print("Menu Code: ");
+                String buyMenu = input.nextLine();
 
-        while (ordering){
-            System.out.print("Menu Code: ");
-            String buyMenu = input.nextLine();
-            if (buyMenu.equalsIgnoreCase("done")){
-                showClear();
-                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                System.out.println("Redirecting to Receipt...");
-                showReceipt(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
-                ordering = false;
-                return;
-            }
-            boolean isFound = false;
-            for (int i = 0; i < menuCode.size(); i++){
-                if (buyMenu.equalsIgnoreCase(menuCode.get(i))){
-                    buyCode.add(menuCode.get(i));
-                    buyItem.add(menuItem.get(i));
-                    buyPrice.add(menuPrice.get(i));
-                    System.out.print("Enter Quantity: ");
-                    int prodQuan = input.nextInt();
-                    input.nextLine();
-                    buyQuan.add(prodQuan);
-                    isFound = true;
-                    break;
+                if (buyMenu.equalsIgnoreCase("done")) {
+                    showClear();
+                    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    System.out.println("Redirecting to Receipt...");
+                    showReceipt(menuCode, menuItem, menuPrice, buyCode, buyItem, buyPrice, buyQuan);
+                    ordering = false;
+                    return;
                 }
-            }
-            if (!isFound){
-                System.out.println("Invalid menu code. Please try again.");
+
+                boolean isFound = false;
+                for (int i = 0; i < menuCode.size(); i++) {
+                    if (buyMenu.equalsIgnoreCase(menuCode.get(i))) {
+                        isFound = true;
+        
+                        String selectedCode = menuCode.get(i);
+                        String selectedItem = menuItem.get(i);
+                        Double selectedPrice = menuPrice.get(i);
+
+                        buyCode.add(selectedCode);
+                        buyItem.add(selectedItem);
+                        buyPrice.add(selectedPrice);
+
+                        // Quantity loop
+                        while (true) {
+                            try {
+                                System.out.print("Enter Quantity: ");
+                                String quantityInput = input.nextLine();
+                                int prodQuan = Integer.parseInt(quantityInput);
+
+                                if (prodQuan <= 0) {
+                                    System.out.println("Quantity must be greater than 0.");
+                                    continue;
+                                }
+
+                                buyQuan.add(prodQuan);
+                                break;
+                            } catch (NumberFormatException e) {
+                                System.out.println("Invalid quantity. Please enter a valid number.");
+                            }
+                        }
+
+                        break; // Exit for-loop after adding item
+                    }
+                }
+
+                if (!isFound) {
+                    System.out.println("Invalid menu code. Please try again.");
+                }
+
+            } catch (Exception e) {
+                System.out.println("An unexpected error occurred. Please try again.");
+                input.nextLine(); // clear buffer if needed
             }
         }
     }
+        
 
     public static void showMenu(ArrayList<String> menuCode, ArrayList<String> menuItem, ArrayList<Double> menuPrice){
         showClear();
